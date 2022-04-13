@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class ListViewKullanimi extends StatelessWidget {
   ListViewKullanimi({Key? key}) : super(key: key);
@@ -25,7 +26,23 @@ class ListViewKullanimi extends StatelessWidget {
           color: index % 2 == 0 ? Colors.orange.shade100 : Colors.purple.shade100,
           child: ListTile(
             onTap: () {
-              print("Elaman tiklanti : $index");
+              if (index % 2 == 0) {
+                EasyLoading.instance.backgroundColor = Colors.red;
+                EasyLoading.instance.textColor = Colors.purple; // liste elemani tek sayi ise kirmizi olacak
+              } else {
+                EasyLoading.instance.backgroundColor = Colors.blue; // liste elemani cift sayi ise mavi olacak
+              }
+              EasyLoading.showToast(
+                'Eleman tiklandi',
+                duration: Duration(
+                  seconds: 3,
+                ),
+                dismissOnTap: true, // ekranda bir yere tiklayinca kapatma islemi yapiyor
+                toastPosition: EasyLoadingToastPosition.bottom,
+              );
+            },
+            onLongPress: () {
+              _alertDialogIslemleri(context, oAnkiOgrenci);
             },
             title: Text(oAnkiOgrenci.isim),
             subtitle: Text(oAnkiOgrenci.soyisim),
@@ -62,6 +79,34 @@ class ListViewKullanimi extends StatelessWidget {
           .toList(), // map bittikten sonra toList yapisini unutma. map yapisini listeye donusturmemiz lazim
     );
   }
+
+  void _alertDialogIslemleri(BuildContext myContext, Ogrenci secilen) {
+    showDialog(
+        barrierDismissible: false,
+        context: myContext,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(secilen.toString()),
+            content: SingleChildScrollView(
+              // alert uyari penceresinde yukari asagi kaydirmayi saglar
+
+              child: Text('Muttlip ATASAYAR' * 100),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Kapat'),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text('Tamam'),
+              ),
+            ],
+          );
+        });
+  }
 }
 
 class Ogrenci {
@@ -70,4 +115,8 @@ class Ogrenci {
   final String soyisim;
 
   Ogrenci(this.id, this.isim, this.soyisim);
+  @override
+  String toString() {
+    return 'Isim : $isim SoyIsim :$soyisim id : $id';
+  }
 }
